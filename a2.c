@@ -82,8 +82,9 @@ int readIn(int option)
   }
   //TODO: HERE BIGRAM IST FERTIG
   // MIT OPTION KANN MAN ENTSCHEIDEN OB VER ODER ENTSCHLÜSSELN
-  // JEW EINE FUNKT  SCHREIBEN DIE DAS MACHT
+  // JEWEILS EINE FUNKT  SCHREIBEN DIE DAS MACHT
   // DA GIBT ES REGELN IN DER ANGABE ... BIGRAMM IST EIN 2D ARRAY.. MUSST DU RICHTIG DURCHITERIEREN
+  
   printf("\n option ist %d\n" ,option);
   return 0;
 }
@@ -151,8 +152,6 @@ int stringLength(char *text)
 //-----------------------------------------------------------------------------
 void toUpper(char *text) 
 {
-
-
   int i = 0;
   while(text[i] != '\0')
   {
@@ -160,20 +159,16 @@ void toUpper(char *text)
     {
       text[i] = text[i] -32;
     }
-
     i++;
   }
 
   // TODO: Implement
-
-
   // WARNING: Do not change the signature of the function
 }
 
 //-----------------------------------------------------------------------------
 void replaceLetters(char *text, char original, char new_char) 
 {
-
   int i = 0;
   while(text[i] != '\0')
   {
@@ -181,7 +176,6 @@ void replaceLetters(char *text, char original, char new_char)
     {
       text[i] = new_char;
     }
-
     i++;
   }
 
