@@ -81,10 +81,11 @@ int readIn(int option)
             pos_in_input++;
         }
     }
-    //HERE BIGRAM IS READY
+   	//HERE BIGRAM IS READY
 	//WITH OPTION YOU CAN DECIDE WHETHER TO ENCRYPT OR DECRYPT
 	//EVERYWHERE A FUNCTION IS WRITING THE POWER
 	//THERE ARE RULES IN THE SPECIFICATION ... BIGRAMM IS A 2D ARRAY. YOU HAVE T    //QUOTE CORRECTLY
+	
     printf("\n option ist %d\n" , option);
     return 0;
 }
