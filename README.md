@@ -213,4 +213,3 @@ For the 'generatePlayfairSquare' to work correctly, the following three function
 * Delivery until *at the latest*: 05.12.2020 23:59 (time valid in Austria)
 * Delivery: a2.c
 
-
