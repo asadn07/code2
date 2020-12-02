@@ -1,6 +1,7 @@
 // Assignment 2 Playfair Cypher 
 // Autor: Tutors
 //
+
 #include <stdio.h>
 #include <ctype.h>
 
