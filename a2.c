@@ -208,4 +208,3 @@ void replaceLetters(char *text, char original, char new_char) {
     // TODO: Implement
     // WARNING: Do not change the signature of the function
 }
-
