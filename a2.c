@@ -70,6 +70,7 @@ int process_input(int option, char *key) {
         printf("zu groß !, return 0; TODO: CHANGE TO CORRECT ERRORMSG!");
         return -1;
     }
+    
 //    int i = 0;
 //    while (i < stringLength(input)) {
 //        if (input[i] == input[i + 1]) {
