@@ -1,214 +1,528 @@
-# Specification for Assignment 2
-
-## Learning objective
-Functions, parameter passing, pointers, arrays, strings, ASCII
-
-## Task
-
-Create a program that implements a modified version of the [Playfair cipher](https://de.wikipedia.org/wiki/Playfair). After entering a key (A-Z and space, max. 25 characters) the program can encrypt and decrypt a string of characters (A-Z and space, max. 50 characters).
-
-### Preparation (=cleaning) of the key
-
-A valid key may only contain the letters A-Z (case insensitive, minimum 1 letter) and spaces, and may be a maximum of 25 characters long (including spaces). To use the key, it must first be cleaned. This process consists of the following steps:
-
-* Spaces are removed.
-* All characters are converted to upper case.
-* W is replaced with V.
-* In the case of letters that occur several times, only the first occurrence of the letter is retained. All other occurrences of the letter are removed.
-
----
-**Example:**
-```
-We program -> VIRPOGAMS
-```
-
----
-
-### Create the Playfair square
-
-The 5x5 Playfair square is filled starting from the top left (index 0). First all fields with even indexes are filled and only then all fields with odd indexes. 
-The filling is done first with the cleaned key, then all unused letters of the alphabet are inserted.
-
-Example: see [Program flow](#program flow)
+ESPipes
 
 
-### Encryption
+Inhaltsverzeichnis
 
-A valid plaintext (=the text to be encoded) may only contain the letters A-Z (case insensitive, at least one letter) and spaces and may be a maximum of 50 characters long (including spaces).
 
-The plaintext is prepared as follows:
 
-* Spaces are removed.
-* All characters are converted to upper case.
-* W is replaced with V.
+ESPipes
+Lernziele
+Beschreibung
 
-The plaintext is then processed into bigrams. A bigram is a pair of letters, which means that e.g. the prepared plaintext TIP is converted into the bigrams SP, IT, and ZE. The following rules apply to this conversion in this order:
+Dateiformat
+Gesamt
+Eintrag in Highscore-Liste
+Eintrag im Spielfeld
+Rohr-Feld
 
-* If two identical characters occur in a bigram, the letter X is inserted between the letters (e.g. DO PP EL T -> DO PX PE LT). Attention, the maximum length of 50 characters also applies to the bigrams! That means, if the bigrams grow to a total length of more than 50 characters because of inserted 'X', the plaintext is also invalid.
-* If the text now has an odd number of characters, the last bigram is filled up with X (e.g. ESP -> ES PX or BETT -> BE TX T -> BE TX TX)
 
-The encryption process uses the following three Playfair cipher rules:
 
-1. if both letters are in the same line of the Playfair square, they are each replaced with their *right* neighbor letter in the square If there is a letter on the right edge of the square, it will be replaced with the letter on the left edge of the same line of the square.
-2. if both letters are in the same column of the Playfair square, they will be replaced with their *lower* neighbor letter in the square If there is a letter at the bottom of the square, it will be replaced with the letter at the top of the same column.
-3. if the letters are in different rows and columns of the Playfair square, the letter will be replaced with the letter in the same row but the column of the other letter (the two letters form a rectangle in the Playfair square and are replaced with their respective corners).
+Datentypen
+Direction
+Highscore
 
-*Note:* The case that the plaintext contains an XX or is padded to XX does not need to be taken into account in the encryption.
 
-Example: see [Program flow](#program flow)
+Framework
+Programm-Struktur
 
-### Decryption
+Programm-Ablauf
+Spiel-Start
 
-A valid ciphertext (=encrypted text) may only contain the letters A-Z (case insensitive, at least 2 letters) and spaces and may be a maximum of 50 characters long (including spaces). The number of letters in the ciphertext must be an even number and the text must not contain the letter W or bigrams with two equal letters.
+Spiel-Ablauf
+Befehl: rotate
+Befehl: help
+Befehl: quit
+Befehl: restart
 
-For the decoding the ciphertext is prepared as follows:
 
-* Spaces are removed.
-* All characters are converted to upper case.
+Spiel-Ende
 
-The decryption process is the reverse of encryption with the following rules:
 
-1. if both letters are in the same line of the Playfair square, they are replaced with their *left* neighbor letter in the square. If there is a letter on the left edge of the square, it will be replaced with the letter on the right edge of the same line of the square.
-2. if both letters are in the same column of the Playfair square, they will be replaced with their *upper* neighbor letter in the square If there is a letter at the top of the square, it will be replaced with the letter at the bottom of the same column.
-If the letters are in different rows and columns, the decryption is the same as for encryption (rule 3).
+Programm-Rückgabewerte und Fehlermeldungen
+Beispiel-Ausgabe
+Spezifikation
+Abgabe
+Bewertung
+Verantwortliche Tutoren
 
-Example: see [Program flow](#program flow)
 
-## Program flow:
 
-After program start the prompt for entering the key should be displayed directly:
 
-```
-Please enter key: <key>
-```
+Lernziele
+Das Arbeiten mit dynamischem Speicher, File I/O mit Binärdateien
+sowie die Verwendung von Bitwise-Operationen und Bit-Masken sollen anhand der
+Implementation eines Pipe-Minigames geübt werden.
 
-Where `<key>' is replaced with user input followed by Enter (without square brackets).
-If an invalid key was entered, the last query is repeated.
-If a valid key was entered, the [cleaned key](#preparation-clean-up-the-key) followed by the playfair square is output.
+Beschreibung
+ESPipes ist eine Variation der Pipe-Minigames. Das Ziel des Spiels ist es,
+durch das Drehen von Rohren eine Verbindung zwischen dem Start- und Zielrohr
+herzustellen. Die Anzahl der benötigten Züge ist hierbei das Punkteergebnis,
+wobei weniger Punkte (also weniger Züge) ein besseres Ergebnis bedeuten.
+Jede Konfigurationsdatei enthält hierzu auch eine Highscore-Liste, die
+entsprechend aktualisiert werden soll.
 
-Example with key [Hello World
-```
-Selected key: HALOVET
+Dateiformat
+Die Konfigurationsdatei verwendet ein Binärformat. Es kann davon ausgegangen
+werden, dass die Datei korrekt formatiert ist, wenn sie mit der korrekten
+Magic-Number beginnt.
+Das Format, also Reihenfolge und Länge der Felder, wird durch folgende
+Tabellen spezifiziert (alle Felder mit numerischen Werten sind unsigned):
 
-Playfair Square:
-H J A K L
-M O N V P
-E Q T R B
-S C U D X
-F Y G Z I
-```
+Gesamt
 
-Then the user* is asked with the following output whether he/she wants to encrypt or decrypt a text or quit the program.
-``` 
 
-Please select an option:
-1 - Encrypt
-2 - Decrypt
-0 - End program
-  
-<value>
-```
-In this output, `<value>' corresponds to the user input.
-If `<value>' has the value 0, the program is terminated with the return value 0.
-If an invalid value was entered (i.e., neither '0' nor '1' or '2'), the last query is repeated.
 
-If 1 or 2 was selected, the text will be encrypted or decrypted with the procedure below.
-Then the above query of options is repeated until the user* ends the program.
+Länge
+Inhalt
 
-### Encryption
 
-If a plaintext is encrypted, the text is queried first:
-```
-Plain text: <text>
-```
-Here `<text>' corresponds to the user input.
-If an invalid text was entered, the last query is repeated.
 
-Then the text is prepared as described above, encrypted and output in the following format:
 
-Example with plain text 'Programming is fun' with key from above (HALOVET)
-```
-Prepared plain text: PR OG RA MX MI ER EN MA CH TS PA SX SX
-Ciphertext: VB NY TK PS PF QB TM NH SJ EU NL CS CS
-```
+7 Byte
 
-### Decryption
-If a cipher text is decrypted, the text is queried first:
-```
-Ciphertext: <text>
-```
-Here `<text>' corresponds to the user input.
-If an invalid text was entered, the last query is repeated.
+Magic-Number (Muss der ASCII-Text "ESPipes", ohne String-Terminator, sein)
 
-Then the text is prepared as described above, decoded and output in the following format:
 
-Example with ciphertext 'vbnytkpspfqbtmnhsjeunlcs' with key from above (`HALOVET`)
-```
-Prepared Ciphertext: VB NY TK PS PF QB TM NH SJ EU NL CS CS
-Plain text: PR OG RA MX MI ER EN MA CH TS PA SX SX 
-```
+1 Byte
+Breite des Spielfelds
 
-### Example
-```
-Please enter your key: Hello World
-Selected key: HALOVET
 
-Playfair Square:
-H J A K L
-M O N V P
-E Q T R B
-S C U D X
-F Y G Z I
+1 Byte
+Höhe des Spielfelds
 
-Please select an option:
-1 - Encrypt
-2 - Decrypt
-0 - End program
 
-1
-Plain text: Programming is fun
-Prepared plain text: PR OG RA MX MI ER EN MA CH TS PA SX SX
-Ciphertext: VB NY TK PS PF QB TM NH SJ EU NL CS CS
+1 Byte
+Zeile des Startrohrs
 
-Please select an option:
-1 - Encrypt
-2 - Decrypt
-0 - End program
 
-2
-Ciphertext: vbnytkpspfqbtmnhsjeunlcscs
-Prepared Ciphertext: VB NY TK PS PF QB TM NH SJ EU NL CS CS
-Plain text: PR OG RA MX MI ER EN MA CH TS PA SX SX
+1 Byte
+Spalte des Startrohrs
 
-Please select an option:
-1 - Encrypt
-2 - Decrypt
-0 - End program
+
+1 Byte
+Zeile des Zielrohrs
+
+
+1 Byte
+Spalte des Zielrohrs
+
+
+1 Byte
+Anzahl der Einträge in der Highscore-Liste
+
+
+N/A
+Highscore-Liste
+
+
+N/A
+Spielfeld
+
+
+
+
+Hinweis: Die Koordinaten in der Konfigurationsdatei verwenden den
+Basis-Index 0, die Koordinaten in der Eingabe/Ausgabe den Basis-Index 1.
+
+
+Eintrag in Highscore-Liste
+
+
+
+Länge
+Inhalt
+
+
+
+
+1 Byte
+Punktezahl
+
+
+3 Byte
+Name (in ASCII-Zeichenkodierung, ohne String-Terminator)
+
+
+
+
+Eintrag im Spielfeld
+
+
+
+Länge
+Inhalt
+
+
+
+
+1 Byte
+Rohr-Feld
+
+
+
+
+Rohr-Feld
+Jedes Feld besteht aus einem Byte (programmintern durch ein uint8_t
+repräsentiert, andere programminterne Repräsentationsformen wie structs
+sind explizit nicht erlaubt). Das Spielfeld wird programmintern durch ein
+2-dimensionales Array dieser Felder dargestellt, wobei
+die 1. Dimension die Reihen, und die 2. Dimension die Spalten sind.
+Ein Feld enthält folgende Informationen:
+
+Richtungen, in welche das Rohr Öffnungen hat
+Richtungen, in welches das Rohr zusätzlich mit umgebenden Rohren verbunden ist
+
+Diese Informationen sind wie folgt kodiert:
+Feld (in binär):  10 00 00 11
+Richtungen:       ^^          TOP
+                     ^^       LEFT
+                        ^^    BOTTOM
+                           ^^ RIGHT
+
+Feld (in binär):  10 00 00 11
+Werte:            ^  ^  ^  ^  Feld ist in entsprechende Richtung offen
+                   ^  ^  ^  ^ Feld hat in entsprechende Richtung Verbindung zu anderem Rohr
+
+Tipp: Man benötigt nur 6 "Basis"-Bit-Masken, alle anderen benötigten
+Bit-Masken lassen sich aus diesen durch Bitwise-Operationen generieren.
+
+Hier sind ein paar Beispiele zum besseren Verständnis der Kodierung
+(Visualisierung enthält auch die 4 umgebenden Rohre):
+Feld (in binär):  10 00 00 11
+Beschreibung:     Ein "L"-förmiges Rohr, das oben und rechts offen ist, wobei
+                  es rechts auch mit einem anderen Rohr verbunden ist.
+Visualisierung:
+   ╝ 
+  ╗╚═
+   ╬ 
+Feld (in binär):  10 11 11 00
+Beschreibung:     Ein "T"-förmiges Rohr, das oben und links und unten offen ist,
+                  wobei es links und unten auch mit einem anderen Rohr verbunden ist.
+Visualisierung:
+   ╝ 
+  ═╣╗
+   ╬ 
+Feld (in binär):  00 10 00 11
+Beschreibung:     Ein gerades Rohr, das links und rechts offen ist, wobei
+                  es rechts auch mit einem anderen Rohr verbunden ist.
+Visualisierung:
+   ╝ 
+  ╗══
+   ╬ 
+Feld (in binär):  10 10 11 11
+Beschreibung:     Ein "+"-förmiges Rohr, das in alle Richtungen offen ist,
+                  wobei es unten und rechts auch mit einem anderen Rohr
+                  verbunden ist.
+Visualisierung:
+   ╝ 
+  ╗╬═
+   ╬ 
+Feld (in binär):  00 00 00 00
+Beschreibung:     Eine Blockade. Sie hat in keine Richtung Öffnungen, und kann
+                  daher auch nicht mit anderen Rohren verbunden sein.
+Visualisierung:
+   ╝ 
+  ╗█═
+   ╬ 
+
+
+Datentypen
+Folgende Datentypen müssen implementiert werden:
+
+Direction
+Der Datentyp Direction gibt eine Richtung an. Er kann folgende Werte haben:
+
+
+
+Wert
+Bedeutung
+
+
+
 
 0
-```
-
-## Framework
-
-A framework, which takes over the creation of the Playfair square, is provided in [framework.h](./framework.h)
-The function [generatePlayfairSquare] of the framework can be used to query the key, clean it up and then output the Playfair square. The `generatePlayfairSquare` function is passed the `square` parameter which represents the Playfair square.
-
-For the 'generatePlayfairSquare' to work correctly, the following three functions must be implemented in the file 'a2.c':
-
-* `int stringLength(char *text)`: Returns the length of the zero terminated string `text` as int. (Length of the string without the zero terminator \0)
-* `void toUpper(char *text)`: Converts all letters of the string `text` to upper case.
-* `void replaceLetters(char *text, char original, char new_char)`: Replaces all occurrences of the character `original` in the string `text` with the character `new_char`.
-
-*Note:* Strings longer than SIZE_BUFFER are NOT tested by the TestSystem. 
-
-## Specification
-
-**No functions related to dynamic memory management** may be used (malloc).
-* Also **not allowed libraries**: <string.h> and <stdlib.h>
-* No additional output
-* All issues are made on stdout
-* No issues on stderr
-* Delivery until *at the latest*: 05.12.2020 23:59 (time valid in Austria)
-* Delivery: a2.c
+TOP
 
 
+1
+LEFT
+
+
+2
+BOTTOM
+
+
+3
+RIGHT
+
+
+
+
+Tipp: Die Werte sind so gewählt, dass mit ihnen auch gerechnet werden
+kann.
+
+Der Datentyp dient der programminternen Repräsentation einer Richtung. Dies
+kann etwa die Rotations-Richtung beim Drehen eines Feldes oder auch
+die Ausrichtung zweier benachbarter Felder zueinander (zB. "Feld rechts vom
+aktuellen Feld") sein.
+
+Highscore
+Der Datentyp Highscore enthält die Highscore-Liste. Er darf beliebig
+implementiert werden, soll jedoch ein eigener, auf die Aufgabe spezialisierter,
+Datentyp sein.
+
+Framework
+Ein Framework zur (Befehls-)Eingabe, Text-Ausgabe, und zum Pathfinding wird
+bereitgestellt. Weitere Informationen zum Framework sind in Form von
+Dokumentation in framework.h zu finden.
+
+Programm-Struktur
+Es wird Empfohlen, folgende Hilfs-Funktionen zu implementieren:
+bool isDirectionOutOfMap(uint8_t width, uint8_t height, uint8_t coord[2], Direction dir);
+bool isPipeOpenInDirection(uint8_t** map, uint8_t width, uint8_t height, uint8_t coord[2], Direction dir);
+bool shouldPipeConnectInDirection(uint8_t** map, uint8_t width, uint8_t height, uint8_t coord[2], Direction dir);
+uint8_t* getAdjacentPipe(uint8_t** map, uint8_t width, uint8_t height, uint8_t coord[2], Direction dir);
+
+Programm-Ablauf
+
+Spiel-Start
+Das Programm wird mit einem Kommandozeilenparameter aufgerufen. Dieser gibt den
+Pfad zur Konfigurationsdatei an, die geladen werden soll. Sollte das Programm
+
+mit mehr oder weniger Parametern aufgerufen werden oder
+die Konfigurationsdatei nicht geöffnet werden können oder
+die Konfigurationsdatei nicht mit der korrekten Magic-Number beginnen,
+
+soll die entsprechende Fehlermeldung ausgegeben werden und das Programm mit dem
+entsprechenden Rückgabewert beendet werden (siehe
+Programm-Rückgabewerte und Fehlermeldungen).
+Anschließend beginnt die erste Runde.
+
+Spiel-Ablauf
+Zu Beginn jeder Runde wird das Spielfeld ausgegeben:
+
+ │1234567
+─┼───────
+1│╞║╗╔╠═║
+2│╗█╣╔║╗╔
+3│═╠╗║╗█╣
+4│╗█╣╔║═╔
+5│═╠═║╗█╣
+6│╚╝╚╠═║╨
+
+
+
+Hinweis: Die Zeichen ╨,╡,╥,╞ stellen die Start- bzw. Zielrohre
+dar. Sie sind in nur eine Richtung geöffnet.
+
+Anschließend wird die Befehlszeile mit der Rundennummer (beginnend mit 1)
+ausgegeben:
+1 > 
+Danach wird auf eine Benutzereingabe gewartet.
+Wird nichts oder nur Whitespace eingegeben, soll die Befehlszeile erneut
+ausgegeben werden sowie auf eine neue Benutzereingabe gewartet werden.
+Wird ein unbekannter Befehl oder ein bekannter Befehl mit ungültigen Parametern
+eingegeben, soll die entsprechende Fehlermeldung (siehe
+Programm-Rückgabewerte und Fehlermeldungen
+) ausgegeben werden, und die Befehlszeile erneut ausgegeben werden sowie auf
+eine neue Benutzereingabe gewartet werden.
+Wird durch die Drehung eines Rohr-Feldes eine Verbindung zwischen Start-
+und Zielrohr hergestellt, ist das Spiel zu Ende.
+
+Befehl: rotate
+Dieser Befehl erlaubt der/dem Benutzer*in, ein Rohr-Feld in eine Richtung zu
+drehen.
+Wird versucht, dass Start- oder Zielrohr zu drehen, soll die entsprechende
+Fehlermeldung ausgegeben werden.
+Der Befehl rotate hat 3 Parameter:
+
+die Dreh-Richtung (left oder right)
+die Zeilennummer (positive Ganzzahl, kleiner als die Anzahl an Reihen)
+die Spaltennummer (positive Ganzzahl, kleiner als die Anzahl an Spalten)
+
+
+Befehl: help
+Der Befehl help gibt folgenden Hilfetext aus, wobei etwaige Parameter
+ignoriert werden:
+Commands:
+ - rotate <DIRECTION> <ROW> <COLUMN>
+    <DIRECTION> is either `left` or `right`.
+
+ - help
+    Prints this help text.
+
+ - quit
+    Terminates the game.
+
+- restart
+    Restarts the game.
+
+Befehl: quit
+Der Befehl quit (alternativ EOF, ausgelöst durch zB. Ctrl-D) beendet das
+Programm. Parameter werden ignoriert.
+
+Befehl: restart
+Der Befehl restart startet das Spiel neu. Parameter werden ignoriert.
+
+Spiel-Ende
+Zu Spielende wird das (gelöste) Spielfeld, sowie das Punkteergebnis ausgegeben:
+ │1234
+─┼────
+1│╞╗╔═
+2│█║╬╚
+3│╣╚╗║
+4│╗╬╚╡
+
+Puzzle solved!
+Score: 4
+Wurde ein Highscore aus der Highscore-Liste geschlagen, wird der Spieler davon
+informiert. Danach wird die/der Benutzer*in nach einem 3 Zeichen langen Namen
+gefragt:
+Beat Highscore!
+Please enter 3-letter name: 
+Werden mehr oder weniger als 3 Zeichen, oder andere Zeichen als Buchstaben
+eingegeben, soll die entsprechende Fehlermeldung ausgegeben werden, sowie
+erneut nach einem Namen gefragt werden.
+Der eingegebene Name wird zu Großbuchstaben konvertiert, und die
+Highscore-Liste aktualisiert, wobei die Anzahl an Einträgen gleich bleiben
+soll. Ein Score von 0 bedeutet, dass der Platz in der Highscore-Liste frei
+ist. Bei gleichem Highscore soll der neue Score weiter unten gereiht werden.
+Anschließend muss die Highscore-Liste auch noch in der Konfigurationsdatei
+aktualisiert werden. Hier soll ausschließlich die neue Highscore-Liste in
+die Datei geschrieben werden, und nicht die ganze Datei neu geschrieben
+werden.
+
+Tipp: Der file-mode rb+ erlaubt es, Teile einer bestehenden Datei
+zu überschreiben.
+
+Zuletzt wird die Highscore-Liste ausgegeben, wobei bei freien Plätzen (also
+Einträgen mit  Score 0) statt des Namens --- ausgegeben wird.
+Anschließend wird das Programm beendet:
+
+Highscore:
+   FOO 4
+   BAR 5
+   BAZ 7
+   QUX 11
+   --- 0
+
+Programm-Rückgabewerte und Fehlermeldungen
+
+
+
+Wert
+Fehlermeldung
+Bedeutung
+
+
+
+
+0
+
+Erfolgsfall
+
+
+1
+Usage: ./a3 CONFIG_FILE\n
+Falsche Anzahl von Kommandozeilenparametern
+
+
+2
+Error: Cannot open file: <CONFIG_FILE>\n
+Konfigurationsdatei kann nicht geöffnet werden
+
+
+3
+Error: Invalid file: <CONFIG_FILE>\n
+Konfigurationsdatei beginnt nicht mit korrekter Magic-Number
+
+
+
+4
+Error: Out of memory\n
+Kein Speicher kann mehr angefordert werden
+
+
+
+Error: Unknown command: <COMMAND>\n
+Unbekannter Befehl eingegeben
+
+
+
+Usage: rotate ( left | right ) ROW COLUMN\n
+Ungültige Parameter für Befehl rotate
+
+
+
+
+Error: Rotating start- or end-pipe is not allowed\n
+Drehung von Start- oder Zielrohr
+
+
+
+Error: Invalid name. Only alphabetic letters allowed\n
+Name enthält ungültige Zeichen
+
+
+
+Error: Invalid name. Name must be exactly 3 letters long\n
+Name kürzer oder länger als 3 Zeichen
+
+
+
+
+Hinweis: Platzhalter sind durch  <> markiert, und sollen durch den
+entsprechenden Wert ersetzt werden - auch die spitzen Klammern sind nicht
+Teil der Ausgabe.
+
+
+Beispiel-Ausgabe
+Eine Beispiel-Ausgabe ist in der Datei EXAMPLE.txt zu finden.
+
+Spezifikation
+
+Keine zusätzlichen Ausgaben
+Alle Ausgaben erfolgen auf stdout
+
+Keinerlei Ausgaben auf stderr
+
+
+
+Der Dateiinhalt, insbesondere das Spielfeld und die Highscore-Liste, müssen
+am Heap gespeichert werden
+
+Das Spielfeld wird als 2-dimensionales Array von uint8_t gespeichert
+Die Highscore-Liste wird mit eigenem Datentypen (siehe
+Datentypen -> Highscore) gespeichert
+
+
+
+
+Abgabe
+
+Die Abgabe erfolgt per git auf das Repository, das durch Progpipe
+erstellt wurde.
+
+Hierzu darf nicht das Web-Interface von GitLab verwendet werden.
+
+
+Dateiname: a3.c
+
+Abgabe bis spätestens: 09.01.2021 23:59 (in Österreich gültige Zeit)
+
+
+Bewertung
+Das Assignment wird
+wie im TeachCenter beschrieben
+bewertet. Machen Sie sich auch mit dem Beurteilungsschema für die Übungen vertraut, insbesondere mit den Regeln zu Plagiaten!
+
+Achtung: Damit die Abgabe als ernsthafter Versuch gewertet wird, muss das
+abgegebene Programm mindestens 6 Test Cases bestehen!
+
+
+Verantwortliche Tutoren
+
+Florian Hager
+Nives Krizanec
+Clemens Oberhauser
+Lukas Pucher
